@@ -1,11 +1,12 @@
 import React from "react";
-import "./App.css";
+import { Signup } from "./Pages/Signup.jsx"; 
 
 function App() {
-  return (
-    <div>
-    </div>
-  );
+    return (
+        <div>
+            <Signup />
+        </div>
+    );
 }
 
 export default App;
