@@ -12,7 +12,21 @@ export default function SignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    signup();
+    if(validatePassword()) {
+      signup();
+    }
+  };
+
+  const validatePassword = () => {
+    const passwordPattern =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%*])(?=.{8,})/;
+    if (!passwordPattern.test(password)) {
+      toast.error(
+        'Password must contain at least 8 characters, including at least 1 number and 1 includes both lower and uppercase letters and special characters for example #,?,!'
+      );
+      return false;
+    }
+    return true;
   };
 
   const signup = async () => {
