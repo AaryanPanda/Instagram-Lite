@@ -1,6 +1,6 @@
 import React from 'react';
-import DesktopNav from '../Components/headers/DesktopNav/DesktopNav';
-import MobileNav from '../Components/headers/MobileNav/MobileNav';
+import DesktopNav from '../Components/Headers/DesktopNav/DesktopNav';
+import MobileNav from '../Components/Headers/MobileNav/MobileNav';
 
 export default function Home() {
   return (
