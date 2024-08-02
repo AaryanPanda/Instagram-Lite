@@ -24,7 +24,7 @@ const FeedCard = ({ feed }) => {
                 <img src={feed.postImg} alt={feed.caption} className="w-full h-full object-cover" />
             </div>
 
-            {/* User Actions - Like, comment share and save  */}
+            {/* User Actions - Like, Comment, Share and Save  */}
             <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-x-3">
                     <button className="text-black">
