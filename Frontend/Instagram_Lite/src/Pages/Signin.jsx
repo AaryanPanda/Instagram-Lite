@@ -30,6 +30,9 @@ export default function SignIn() {
       const data = await response.json();
       if (response.ok) {
         toast.success(data.message);
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
         setEmail('');
         setPassword('');
         console.log(data);
