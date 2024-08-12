@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -8,7 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
     signin();
@@ -35,6 +35,7 @@ export default function SignIn() {
         }
         setEmail('');
         setPassword('');
+        navigate("/")
         console.log(data);
       } else {
         toast.error(data.error);
