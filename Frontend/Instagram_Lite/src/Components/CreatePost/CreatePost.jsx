@@ -5,6 +5,7 @@ import { supabase } from "../../Services/SupabaseClient.jsx";
 Modal.setAppElement(document.getElementById("root"));
 
 const CreatePost = ({ closeModal }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [selectedImage, setSelectedImage] = useState(null);
   const [caption, setCaption] = useState("");
   const [hashtag, setHashtag] = useState("");
@@ -15,18 +16,39 @@ const CreatePost = ({ closeModal }) => {
     }
   };
 
-  const handleShare = () => {
-    console.log("Post Shared", {
-      image: selectedImage,
-      caption,
-      hashtag,
-    });
-    closeModal();
+  const handleShare = async () => {
+    if (selectedImage && caption && hashtag) {
+      try {
+        const response = await fetch(`${API_URL}/api/posts/create`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            image: selectedImage,
+            caption,
+            hashtags: hashtag,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+
+        await response.json();
+        closeModal();
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      console.warn("Please provide all the fields");
+    }
   };
 
   const handleUpload = async (image) => {
     if (image) {
-      const fileName = `${Date.now()}-${image.name}`; // Fix: Use template literals correctly
+      const fileName = `${Date.now()}-${image.name}`;
       const { data, error } = await supabase.storage
         .from("Post_Images")
         .upload(fileName, image);
@@ -38,7 +60,9 @@ const CreatePost = ({ closeModal }) => {
 
       console.log("Uploaded data: ", data);
 
-      const urlInfo = supabase.storage.from("Post_Images").getPublicUrl(data.path);
+      const urlInfo = supabase.storage
+        .from("Post_Images")
+        .getPublicUrl(data.path);
 
       setSelectedImage(urlInfo.data.publicUrl);
       console.log("File Link Retrieved Successfully: ", urlInfo.data.publicUrl);
