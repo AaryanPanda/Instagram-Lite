@@ -1,26 +1,48 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
+import React, { useState } from "react";
+import Modal from "react-modal";
+import { supabase } from "../../Services/SupabaseClient.jsx";
 
-Modal.setAppElement(document.getElementById('root'));
+Modal.setAppElement(document.getElementById("root"));
 
 const CreatePost = ({ closeModal }) => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [caption, setCaption] = useState('');
-  const [hashtag, setHashtag] = useState('');
+  const [caption, setCaption] = useState("");
+  const [hashtag, setHashtag] = useState("");
 
   const handleImageUpload = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedImage(URL.createObjectURL(e.target.files[0]));
+      handleUpload(e.target.files[0]);
     }
   };
 
   const handleShare = () => {
-    console.log('Post Shared', {
+    console.log("Post Shared", {
       image: selectedImage,
       caption,
       hashtag,
     });
     closeModal();
+  };
+
+  const handleUpload = async (image) => {
+    if (image) {
+      const fileName = `${Date.now()}-${image.name}`; // Fix: Use template literals correctly
+      const { data, error } = await supabase.storage
+        .from("Post_Images")
+        .upload(fileName, image);
+
+      if (error) {
+        console.error("Upload failed: ", error);
+        return;
+      }
+
+      console.log("Uploaded data: ", data);
+
+      const urlInfo = supabase.storage.from("Post_Images").getPublicUrl(data.path);
+
+      setSelectedImage(urlInfo.data.publicUrl);
+      console.log("File Link Retrieved Successfully: ", urlInfo.data.publicUrl);
+    }
   };
 
   return (
