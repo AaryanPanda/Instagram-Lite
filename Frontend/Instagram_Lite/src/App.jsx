@@ -1,35 +1,45 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import SignUp from "./Pages/Signup";
-import SignIn from "./Pages/Signin";
+import SignUp from "./Pages/SignUp";
+import SignIn from "./Pages/SignIn";
 import Home from "./Pages/Home";
 import Profile from "./Pages/Profile";
 import AppLayout from "./Pages/AppLayout";
+import { AuthProvider, useAuth } from "./Context/AuthContext";
 
-function App() {
-  const token = localStorage.getItem("token");
-
+function RoutesComponent() {
+  const { isAuthenticated } = useAuth();
   return (
     <BrowserRouter>
       <div className="App">
         <Routes>
           <Route
             path="/"
-            element={token ? <AppLayout /> : <Navigate to="/signin" />}
+            element={
+              isAuthenticated ? <AppLayout /> : <Navigate to="/signin" />
+            }
           >
-            <Route index element={<Home />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
           <Route
             path="/signup"
-            element={token ? <Navigate to="/" /> : <SignUp />}
+            element={isAuthenticated ? <Navigate to="/" /> : <SignUp />}
           />
           <Route
             path="/signin"
-            element={token ? <Navigate to="/" /> : <SignIn />}
+            element={isAuthenticated ? <Navigate to="/" /> : <SignIn />}
           />
         </Routes>
       </div>
     </BrowserRouter>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <RoutesComponent></RoutesComponent>
+    </AuthProvider>
   );
 }
 
