@@ -1,42 +1,48 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../Context/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function SignIn() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     signin();
   };
 
   const signin = async () => {
-    console.log('Sign In function called');
+    console.log("Sign In function called");
     try {
       const response = await fetch(`${API_URL}/api/users/login`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: email,
           password: password,
         }),
       });
+
       const data = await response.json();
+
       if (response.ok) {
         toast.success(data.message);
         if (data.token) {
-          localStorage.setItem('token', data.token);
+          login(data.token);
+          navigate("/");
         }
-        setEmail('');
-        setPassword('');
-        navigate("/")
-        console.log(data);
+
+        setEmail("");
+        setPassword("");
+        
       } else {
         toast.error(data.error);
       }
@@ -93,7 +99,7 @@ export default function SignIn() {
             </button>
             <div className="mt-4 text-center text-gray-500">
               <p>
-                Don't have an account?{' '}
+                Don't have an account?{" "}
                 <Link to={`/signup`} className="text-blue-500 hover:underline">
                   Sign Up
                 </Link>
