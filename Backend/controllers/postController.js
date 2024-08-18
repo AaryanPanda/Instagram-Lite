@@ -1,4 +1,4 @@
-const { Post, User } = require('../models/'); 
+const { Post, User, Like } = require('../models/Index');
 const { body, validationResult } = require('express-validator');
 
 const validateCreatePost = [
@@ -51,4 +51,60 @@ const getAllPost = async (req, res) => {
   }
 };
 
-module.exports = { createPost, validateCreatePost, getAllPost };
+const likePost = async (req, res) => {
+  try {
+    const { postId } = req.body;
+    const userId = req.user.id;
+
+    //Find the post
+    const post = await Post.findByPk(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const existingLike = await Like.findOne({ where: { postId, userId } });
+
+    if (existingLike) {
+      return res
+        .status(400)
+        .json({ message: 'User has already liked the post' });
+    }
+
+    await Like.create({ postId, userId });
+
+    res.status(200).json({ message: 'Post liked successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const unlikePost = async (req, res) => {
+  try {
+    const { postId } = req.body;
+    const userId = req.user.id;
+
+    //Find the post
+    const post = await Post.findByPk(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const existingLike = await Like.findOne({ where: { postId, userId } });
+
+    if (!existingLike) {
+      return res.status(400).json({ message: 'User has not liked the post' });
+    }
+
+    await existingLike.destroy();
+
+    res.status(200).json({ message: 'Post unliked successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost };
