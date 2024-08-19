@@ -127,7 +127,7 @@ export default function SignUp() {
           </button>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-lg text-center mt-4">
-          <p>Have an account? <Link to={`/login`} className="text-blue-500 hover:underline">Sign In</Link></p>
+          <p>Have an account? <Link to={`/signin`} className="text-blue-500 hover:underline">Sign In</Link></p>
         </div>
       </div>
     </div>

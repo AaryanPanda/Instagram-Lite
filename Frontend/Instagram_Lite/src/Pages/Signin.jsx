@@ -36,7 +36,7 @@ export default function SignIn() {
       if (response.ok) {
         toast.success(data.message);
         if (data.token) {
-          login(data.token);
+          login(data);    
           navigate("/");
         }
 
