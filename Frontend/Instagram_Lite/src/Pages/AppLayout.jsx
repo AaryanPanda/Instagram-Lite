@@ -7,10 +7,15 @@ import Logout from "../Components/Logout/Logout";
 import { useAuth } from '../Context/AuthContext';
 
 const AppLayout = () => {
+  const [newPost, setNewPost] = useState(false);
   const { logout } = useAuth();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const openLogoutModal = () => setIsLogoutModalOpen(true);
   const closeLogoutModal = () => setIsLogoutModalOpen(false);
+
+  const updateNewPost = () => {
+    setNewPost((prev) => !prev);
+  };
 
   const handleLogout = () => {
     logout();
@@ -30,7 +35,7 @@ const AppLayout = () => {
         <div className="w-full h-auto py-1 px-3 border-b border-b-[#1d1d1d] fixed top-0 left-0 lg:hidden md:hidden sm:block z-50 bg-white">
           <TopNav openLogoutModal={openLogoutModal}></TopNav>
         </div>
-        <Outlet></Outlet>
+        <Outlet context={{ newPost, updateNewPost }}></Outlet>
       </div>
       {isLogoutModalOpen && (
         <Logout onClose={closeLogoutModal} onConfirm={handleLogout} />

@@ -1,15 +1,17 @@
-import React from 'react';
-import { formatDistanceToNow } from 'date-fns';
+import React from "react";
+import { formatDistanceToNow } from "date-fns";
 import {
   FaHeart,
+  FaRegHeart,
   FaRegComment,
   FaRegPaperPlane,
   FaRegBookmark,
   FaRegSmile,
-} from 'react-icons/fa';
+} from "react-icons/fa";
 
-const FeedCard = ({ feed }) => {
+const FeedCard = ({ feed, onLike, onUnlike, currentUserId }) => {
   const timeAgo = formatDistanceToNow(new Date(feed.time), { addSuffix: true });
+  const isLikedByCurrentUser = feed.likedByUserIds.includes(currentUserId);
   return (
     <div className="w-full mx-auto mb-6 bg-white p-4 rounded-lg">
       {/* Profile Picture , Username , Time  */}
@@ -43,8 +45,19 @@ const FeedCard = ({ feed }) => {
       {/* User Actions - Like, comment share and save  */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-x-3">
-          <button className="text-black">
-            <FaHeart></FaHeart>
+          <button
+            className="text-black"
+            onClick={() => {
+              isLikedByCurrentUser ? onUnlike(feed.id) : onLike(feed.id);
+            }}
+          >
+            {isLikedByCurrentUser ? (
+              <FaHeart
+                className="text-red-500"
+              ></FaHeart>
+            ) : (
+              <FaRegHeart ></FaRegHeart>
+            )}
           </button>
           <button className="text-black">
             <FaRegComment></FaRegComment>
@@ -66,8 +79,8 @@ const FeedCard = ({ feed }) => {
       {/* Caption */}
       <div className="w-full text-sm text-black font-thin mb-2">
         <a href="" className="text-black font-medium">
-          {feed.username}{' '}
-        </a>{' '}
+          {feed.username}{" "}
+        </a>{" "}
         {feed.caption}
       </div>
 
