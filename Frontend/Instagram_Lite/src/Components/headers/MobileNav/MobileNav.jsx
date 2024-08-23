@@ -7,17 +7,8 @@ import {
   FaUserPlus,
   FaPlusSquare,
 } from "react-icons/fa";
-import CreatePost from "../../CreatePost/CreatePost";
 
-const MobileNav = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+const MobileNav = ({openModal}) => {
 
   const SidebarItems = [
     {
@@ -78,7 +69,6 @@ const MobileNav = () => {
           </div>
         </div>
       </div>
-      {isModalOpen && <CreatePost closeModal={closeModal} />}
     </>
   );
 };

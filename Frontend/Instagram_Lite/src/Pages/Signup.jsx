@@ -54,7 +54,7 @@ export default function SignUp() {
         setEmail('');
         setUsername('');
         setPassword('');
-        navigate('/login')
+        navigate('/signin')
       } else {
         toast.error(data.error);
       }

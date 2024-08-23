@@ -10,7 +10,6 @@ const authorizeUser = async (req, res, next) => {
         return res.status(401).json({ success: false, message: "Authentication required" })
     }
     const token = authorization.replace('Bearer ', '');
-console.log(token);
     try {
         const payload = jwt.verify(token, JWT_SECRET)
         const user = await User.findByPk(payload.id)
