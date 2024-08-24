@@ -1,4 +1,4 @@
-const { Post, User, Like } = require('../models/Index');
+const { Post, User, Like, Comment } = require('../models/Index');
 const { body, validationResult } = require('express-validator');
 
 const validateCreatePost = [
@@ -112,6 +112,58 @@ const unlikePost = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
+};
+
+const addComment = async (req, res) => {
+  try {
+    const { comment, postId } = req.body;
+    const userId = req.user.id;
+
+    const post = await Post.findByPk(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    console.log(comment, postId, userId);
+    const newComment = await Comment.create({
+      comment,
+      postId,
+      userId,
+    });
+    console.log(newComment);
+
+    const commentWithUser = await Comment.findOne({
+      where: { id: newComment.id },
+      include: [
+        {
+          model: User,
+          as: 'postedBy',
+          attributes: ['username'],
+        },
+      ],
+    });
+
+    res.status(201).json(commentWithUser);
+  } catch (err) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+const getComments = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const comments = await Comment.findAll({
+      where: { postId },
+      include: [
+        {
+          model: User,
+          as: 'postedBy',
+          attributes: ['username', 'id'],
+        },
+      ],
+    });
+
+    res.status(200).json(comments);
+  } catch (err) {}
 };
 
 module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost };
