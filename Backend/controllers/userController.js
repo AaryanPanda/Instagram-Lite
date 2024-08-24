@@ -56,7 +56,10 @@ const loginUser = async (req, res) => {
       JWT_SECRET,
       { expiresIn: '7d' }
     );
-    res.status(200).json({ token, message: 'Logged In Successfully' });
+
+    const {id,username}=user
+
+    res.status(200).json({ id, username, token, message: 'Logged In Successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

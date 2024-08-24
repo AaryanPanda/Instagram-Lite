@@ -31,18 +31,25 @@ const getAllPost = async (req, res) => {
           as: 'postedBy',
           attributes: ['username'],
         },
+        {
+          model: Like,
+          as: "likes",
+          attributes: ["userId"]
+        }
       ],
       order: [['createdAt', 'DESC']],
     });
     const formattedPosts = posts.map((post) => ({
       id: post.id,
-      profileImg: 'https://cdn-icons-png.flaticon.com/128/3177/3177440.png',
+      profileImg: "https://cdn-icons-png.flaticon.com/128/3177/3177440.png",
       username: post.postedBy.username,
       time: post.createdAt,
       postImg: post.image,
-      likeCount: 150,
+      likeCount: post.likes.length,
       commentCount: 20,
-      caption: post.caption,
+      likedByUserIds: post.likes.map(like => like.userId),
+      caption: post.caption
+      
     }));
     res.status(200).json(formattedPosts);
   } catch (error) {
