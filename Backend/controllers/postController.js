@@ -33,23 +33,33 @@ const getAllPost = async (req, res) => {
         },
         {
           model: Like,
-          as: "likes",
-          attributes: ["userId"]
-        }
+          as: 'likes',
+          attributes: ['userId'],
+        },
+        {
+          model: Comment,
+          as: 'comments',
+          attributes: [],
+        },
       ],
       order: [['createdAt', 'DESC']],
+      attributes: {
+        include: [
+          [sequelize.fn('COUNT', sequelize.col('comments.id')), 'commentCount'],
+        ],
+      },
+      group: ['Post.id', 'postedBy.id'],
     });
     const formattedPosts = posts.map((post) => ({
       id: post.id,
-      profileImg: "https://cdn-icons-png.flaticon.com/128/3177/3177440.png",
+      profileImg: 'https://cdn-icons-png.flaticon.com/128/3177/3177440.png',
       username: post.postedBy.username,
       time: post.createdAt,
       postImg: post.image,
       likeCount: post.likes.length,
-      commentCount: 20,
-      likedByUserIds: post.likes.map(like => like.userId),
-      caption: post.caption
-      
+      commentCount: post.getDataValue('commentCount'),
+      likedByUserIds: post.likes.map((like) => like.userId),
+      caption: post.caption,
     }));
     res.status(200).json(formattedPosts);
   } catch (error) {
