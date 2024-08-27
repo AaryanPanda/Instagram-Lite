@@ -1,4 +1,4 @@
-const { Post, User, Like, Comment } = require('../models/Index');
+const { Post, User, Like, Comment, sequelize } = require('../models/Index');
 const { body, validationResult } = require('express-validator');
 
 const validateCreatePost = [
@@ -34,39 +34,45 @@ const getAllPost = async (req, res) => {
         {
           model: Like,
           as: 'likes',
-          attributes: ['userId'],
+          attributes: [],  
         },
         {
           model: Comment,
           as: 'comments',
-          attributes: [],
+          attributes: [],  
         },
       ],
-      order: [['createdAt', 'DESC']],
       attributes: {
         include: [
-          [sequelize.fn('COUNT', sequelize.col('comments.id')), 'commentCount'],
+          [sequelize.fn('COUNT', sequelize.col('likes.id')), 'likeCount'],  
+          [sequelize.fn('COUNT', sequelize.col('comments.id')), 'commentCount'],  
         ],
       },
       group: ['Post.id', 'postedBy.id'],
+      order: [['createdAt', 'DESC']],
+      subQuery: false  
     });
+
     const formattedPosts = posts.map((post) => ({
       id: post.id,
-      profileImg: 'https://cdn-icons-png.flaticon.com/128/3177/3177440.png',
+      profileImg: "https://cdn-icons-png.flaticon.com/128/3177/3177440.png",
       username: post.postedBy.username,
       time: post.createdAt,
       postImg: post.image,
-      likeCount: post.likes.length,
-      commentCount: post.getDataValue('commentCount'),
-      likedByUserIds: post.likes.map((like) => like.userId),
-      caption: post.caption,
+      likeCount: post.getDataValue('likeCount') || 0,
+      commentCount: post.getDataValue('commentCount') || 0,
+      likedByUserIds: post.likes ? post.likes.map(like => like.userId) : [], 
+      caption: post.caption
     }));
+
     res.status(200).json(formattedPosts);
   } catch (error) {
-    console.log('Error fetching posts :' + error);
+    console.error('Error fetching posts: ' + error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+
 
 const likePost = async (req, res) => {
   try {

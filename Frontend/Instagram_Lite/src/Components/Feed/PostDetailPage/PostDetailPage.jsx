@@ -13,7 +13,7 @@ function PostDetailPage({
   updateNewComment,
 }) {
   const [comments, setComments] = useState([]);
-  const API_URL = window.location.origin.replace('3000', '5000');
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -43,7 +43,7 @@ function PostDetailPage({
       className="flex items-center justify-center h-full w-full"
       overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
     >
-      <div className="bg-white rounded-lg p-4 md:p-6 w-11/12 md:w-4/5 lg:p-8 w-full mx-4 relative flex flex-col md:flex-row">
+      <div className="bg-white rounded-lg p-4 md:p-6 h-2/3 w-11/12 md:w-4/5 lg:p-8 mx-4 relative flex flex-col md:flex-row">
         <button
           onClick={onClose}
           className="absolute top-0 right-2 text-gray-500 hover:text-gray-700 text-4xl"
@@ -107,7 +107,7 @@ function PostDetailPage({
             </div>
           </div>
         </div>
-      </div>
+      </div>                                                                                                                                                                                                                                                                
     </Modal>
   );
 }
