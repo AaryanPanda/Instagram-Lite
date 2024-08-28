@@ -1,5 +1,5 @@
 const { Post, User, Like, Comment, sequelize } = require('../models/Index');
-const { body, validationResult } = require('express-validator');
+const { body, validationResult, Result } = require('express-validator');
 
 const validateCreatePost = [
   body('caption').notEmpty().withMessage('Caption is required'),
@@ -177,7 +177,38 @@ const getComments = async (req, res) => {
     });
 
     res.status(200).json(comments);
-  } catch (err) {}
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost, addComment, getComments };
+
+const deletePost = async (req, res) => {
+    try {
+      const { postId } = req.params;
+      const userId = req.user.id;
+  
+      const post = await Post.findByPk(postId);
+  
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+  
+      if (post.userId !== userId) {
+        return res
+          .status(403)
+          .json({ message: 'You are not authorized to delete this post' });
+      }
+  
+      await Comment.destroy({ where: { postId } });
+      await Like.destroy({ where: { postId } });
+      await post.destroy();
+  
+      res.status(200).json({ message: 'Post deleted successfully' });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+
+module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost, addComment, getComments, deletePost };
