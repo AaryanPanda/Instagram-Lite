@@ -1,11 +1,13 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import ProfileHeader from "../Components/Profile/ProfileHeader";
 import ProfileBio from "../Components/Profile/ProfileBio";
 import ProfilePosts from "../Components/Profile/ProfilePost";
+import { useOutletContext } from "react-router-dom";
 
 const Profile = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const [profileData, setProfileData] = useState();
+  const { newPost, updateNewPost } = useOutletContext();
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -31,7 +33,7 @@ const Profile = () => {
     };
 
     fetchProfileData();
-  }, []);
+  }, [newPost]);
 
   return (
     <div className="max-w-4xl w-full lg:w-[70%] h-auto mx-auto mt-9 mb-9 pt-9">
@@ -42,7 +44,10 @@ const Profile = () => {
             postCount={profileData.posts.length}
           ></ProfileHeader>
           <ProfileBio fullname={profileData.user.fullname}></ProfileBio>
-          <ProfilePosts posts={profileData.posts}></ProfilePosts>
+          <ProfilePosts
+            posts={profileData.posts}
+            updateNewPost={updateNewPost}
+          ></ProfilePosts>
         </>
       )}
     </div>

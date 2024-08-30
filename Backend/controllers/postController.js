@@ -1,5 +1,5 @@
-const { Post, User, Like, Comment, sequelize } = require('../models/Index');
-const { body, validationResult, Result } = require('express-validator');
+const { Post, User, Like, Comment, sequelize } = require('../models');
+const { body, validationResult } = require('express-validator');
 
 const validateCreatePost = [
   body('caption').notEmpty().withMessage('Caption is required'),
