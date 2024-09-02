@@ -7,12 +7,27 @@ import {
   FaRegPaperPlane,
   FaRegBookmark,
 } from "react-icons/fa";
+import PostDetailPage from "../PostDetailPage/PostDetailPage";
 
-const FeedCard = ({ feed, onLike, onUnlike, currentUserId }) => {
+const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost }) => {
   const [newComment, setNewComment] = useState("");
   const timeAgo = formatDistanceToNow(new Date(feed.time), { addSuffix: true });
   const isLikedByCurrentUser = feed.likedByUserIds.includes(currentUserId);
   const API_URL = import.meta.env.VITE_API_URL;
+  const [isPostDetailModal, setIsPostDetailModal] = useState(false);
+  const [updateNewComment, setUpdateNewComment] = useState(false);
+
+  const updateCommentList = () => {
+    setUpdateNewComment((prev) => !prev);
+  };
+
+  const handleModalClose = () => {
+    setIsPostDetailModal(false);
+  };
+
+  const handleOpenModal = () => {
+    setIsPostDetailModal(true);
+  };
 
   //Add Comment Function
   const handleAddComment = async () => {
@@ -36,8 +51,10 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId }) => {
       }
 
       const data = await response.json();
+      console.log(data);
+      updateNewPost();
+      updateCommentList();
       setNewComment("");
-
     } catch (err) {
       console.log(err);
     }
@@ -114,8 +131,11 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId }) => {
       </div>
 
       {/* Comment Count */}
-      <div className="w-full text-sm text-gray-600 font-thin mb-2">
-        <a href="" className="text-gray-600 font-normal">
+      <div className="w-full text-sm text-gray-600 font-thin mb-2 cursor-pointer">
+        <a
+          className="text-gray-600 font-normal"
+          onClick={() => setIsPostDetailModal(true)}
+        >
           View all {feed.commentCount} comments
         </a>
       </div>
@@ -124,7 +144,7 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId }) => {
       <div className="w-full flex iteme-center justify-between border-b border-gray-300 pt-2">
         <input
           type="text"
-          value={newComment}  
+          value={newComment}
           onChange={(e) => {
             setNewComment(e.target.value);
           }}
@@ -140,6 +160,17 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId }) => {
           </button>
         </div>
       </div>
+      {isPostDetailModal && (
+        <PostDetailPage
+          feed={feed}
+          newComment={newComment}
+          setNewComment={setNewComment}
+          handleAddComment={handleAddComment}
+          isPostDetailModal={isPostDetailModal}
+          onClose={handleModalClose}
+          updateNewComment={updateNewComment}
+        />
+      )}
     </div>
   );
 };

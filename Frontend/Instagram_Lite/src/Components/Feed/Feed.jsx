@@ -71,6 +71,7 @@ const Feed = ({ newPost, updateNewPost }) => {
               feeds.map((feed) => (
                 <FeedCard
                   key={feed.id}
+                  updateNewPost={updateNewPost}
                   feed={feed}
                   onLike={likePost}
                   onUnlike={unlikePost}
