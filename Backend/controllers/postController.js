@@ -123,14 +123,11 @@ const addComment = async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
-    console.log(comment, postId, userId);
     const newComment = await Comment.create({
       comment,
       postId,
       userId,
     });
-    console.log(newComment);
-
     const commentWithUser = await Comment.findOne({
       where: { id: newComment.id },
       include: [
@@ -144,7 +141,8 @@ const addComment = async (req, res) => {
 
     res.status(201).json(commentWithUser);
   } catch (err) {
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error('Error while adding comment:', err);
+    res.status(500).json({  message: 'Internal Server Error', error: err.message });
   }
 };
 
@@ -166,4 +164,4 @@ const getComments = async (req, res) => {
   } catch (err) {}
 };
 
-module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost };
+module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost, addComment, getComments };

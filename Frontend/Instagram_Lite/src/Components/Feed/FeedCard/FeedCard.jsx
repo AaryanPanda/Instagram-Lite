@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import {
   FaHeart,
@@ -6,12 +6,43 @@ import {
   FaRegComment,
   FaRegPaperPlane,
   FaRegBookmark,
-  FaRegSmile,
 } from "react-icons/fa";
 
 const FeedCard = ({ feed, onLike, onUnlike, currentUserId }) => {
+  const [newComment, setNewComment] = useState("");
   const timeAgo = formatDistanceToNow(new Date(feed.time), { addSuffix: true });
   const isLikedByCurrentUser = feed.likedByUserIds.includes(currentUserId);
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  //Add Comment Function
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+
+    try {
+      const response = await fetch(`${API_URL}/api/posts/addComments`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postId: feed.id,
+          comment: newComment,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      const data = await response.json();
+      setNewComment("");
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="w-full mx-auto mb-6 bg-white p-4 rounded-lg">
       {/* Profile Picture , Username , Time  */}
@@ -52,11 +83,9 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId }) => {
             }}
           >
             {isLikedByCurrentUser ? (
-              <FaHeart
-                className="text-red-500"
-              ></FaHeart>
+              <FaHeart className="text-red-500"></FaHeart>
             ) : (
-              <FaRegHeart ></FaRegHeart>
+              <FaRegHeart></FaRegHeart>
             )}
           </button>
           <button className="text-black">
@@ -95,11 +124,20 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId }) => {
       <div className="w-full flex iteme-center justify-between border-b border-gray-300 pt-2">
         <input
           type="text"
+          value={newComment}  
+          onChange={(e) => {
+            setNewComment(e.target.value);
+          }}
           className="w-full bg-transparent border-none outline-none text-sm text-gray-600 py-2"
           placeholder="Add a Comment ...."
         />
         <div className="text-black">
-          <FaRegSmile></FaRegSmile>
+          <button
+            onClick={handleAddComment}
+            className="bg-blue-500 text-white py-1 px-3 text-sm rounded"
+          >
+            Post
+          </button>
         </div>
       </div>
     </div>

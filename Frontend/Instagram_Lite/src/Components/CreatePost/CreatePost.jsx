@@ -4,7 +4,7 @@ import { supabase } from "../../Services/SupabaseClient.jsx";
 
 Modal.setAppElement(document.getElementById("root"));
 
-const CreatePost = ({ closeModal }) => {
+const CreatePost = ({ closeModal, updateNewPost }) => {
   const API_URL = import.meta.env.VITE_API_URL;
   const [selectedImage, setSelectedImage] = useState(null);
   const [caption, setCaption] = useState("");
@@ -37,6 +37,7 @@ const CreatePost = ({ closeModal }) => {
         }
 
         await response.json();
+        updateNewPost()
         closeModal();
       } catch (error) {
         console.error(error);

@@ -8,16 +8,8 @@ import {
   FaPlusSquare,
   FaSignOutAlt
 } from "react-icons/fa";
-import CreatePost from "../../CreatePost/CreatePost";
-const LargeNav = ({ openLogoutModal }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+const LargeNav = ({ openLogoutModal, openModal }) => {
 
   const SidebarItems = [
     {
@@ -99,7 +91,6 @@ const LargeNav = ({ openLogoutModal }) => {
           </div>
         </div>
       </div>
-      {isModalOpen && <CreatePost closeModal={closeModal} />}
     </>
   );
 };

@@ -14,6 +14,9 @@ Post.hasMany(Like,{foreignKey:'postId',as:"likes"})
 Like.belongsTo(User,{foreignKey:"userId",as:"likedBy"})
 User.hasMany(Like,{foreignKey:"userId",as:"like"})
 
+User.hasMany(Comment,{foreignKey:"userId",as:"comments"});
+Comment.belongsTo(User,{foreignKey:"userId",as:"postedBy"})
+
 Post.hasMany(Comment,{foreignKey:"postId",as:"comments"})
 Comment.belongsTo(Post,{foreignKey:"postId",as:"post"})
 
