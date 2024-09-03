@@ -1,4 +1,4 @@
-const { Post } = require('../models/Index');
+const { Post } = require('../models/');
 
 const getProfile = async (req, res) => {
   try {
