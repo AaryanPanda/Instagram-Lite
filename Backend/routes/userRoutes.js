@@ -12,4 +12,15 @@ router.get("/profile/:username", profileController.getProfileByUsername)
 router.post("/follow/:followeeId", authorizeUser, profileController.followUser)
 router.post("/unfollow/:followeeId", authorizeUser, profileController.unfollowUser)
 
+router.put(
+    '/profile/photo',
+    authorizeUser,
+    profileController.updateProfilePhoto
+);
+router.delete(
+    '/profile/photo',
+    authorizeUser,
+    profileController.deleteProfilePhoto
+);
+
 module.exports = router
