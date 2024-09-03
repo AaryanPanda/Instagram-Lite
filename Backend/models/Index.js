@@ -1,24 +1,33 @@
 const sequelize = require("../config/db");
 const User = require("./User.js");
 const Post = require("./Post.js");
-const Like = require("./Like.js")
-const Comment = require("./Comment.js")
+const Like = require("./Like.js");
+const Comment = require("./Comment.js");
+const Follow = require("./Follow.js")
 
+// User and Post Association
+User.hasMany(Post, { foreignKey: "userId", as: "posts", onDelete: 'CASCADE' });
+Post.belongsTo(User, { foreignKey: "userId", as: "postedBy" });
 
-User.hasMany(Post, { foreignKey: "userId", as: "posts" });
-Post.belongsTo(User, { foreignKey: "userId", as: "postedBy" })
+// Post and Like Association
+Like.belongsTo(Post, { foreignKey: "postId", as: "post", onDelete: 'CASCADE' });
+Post.hasMany(Like, { foreignKey: 'postId', as: "likes", onDelete: 'CASCADE' });
 
-Like.belongsTo(Post,{foreignKey:"postId",as:"post"}),
-Post.hasMany(Like,{foreignKey:'postId',as:"likes"})
+// User and Like Association
+Like.belongsTo(User, { foreignKey: "userId", as: "likedBy", onDelete: 'CASCADE' });
+User.hasMany(Like, { foreignKey: "userId", as: "likes", onDelete: 'CASCADE' });  
 
-Like.belongsTo(User,{foreignKey:"userId",as:"likedBy"})
-User.hasMany(Like,{foreignKey:"userId",as:"like"})
+// User and Comment Association
+User.hasMany(Comment, { foreignKey: "userId", as: "comments", onDelete: 'CASCADE' });
+Comment.belongsTo(User, { foreignKey: "userId", as: "postedBy" });
 
-User.hasMany(Comment,{foreignKey:"userId",as:"comments"});
-Comment.belongsTo(User,{foreignKey:"userId",as:"postedBy"})
+// Post and Comment Association
+Post.hasMany(Comment, { foreignKey: "postId", as: "comments", onDelete: 'CASCADE' });
+Comment.belongsTo(Post, { foreignKey: "postId", as: "post", onDelete: 'CASCADE' });
 
-Post.hasMany(Comment,{foreignKey:"postId",as:"comments"})
-Comment.belongsTo(Post,{foreignKey:"postId",as:"post"})
+// Follow Association (User to User through Follow)
+User.belongsToMany(User, { through: Follow, as: 'Followers', foreignKey: 'followeeId', onDelete: 'CASCADE' });
+User.belongsToMany(User, { through: Follow, as: 'Following', foreignKey: 'followerId', onDelete: 'CASCADE' });
 
 
 module.exports = {
@@ -26,5 +35,6 @@ module.exports = {
     Post,
     User,
     Like,
-    Comment
+    Comment,
+    Follow
 }
