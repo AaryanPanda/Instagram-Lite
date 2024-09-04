@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
 import DeletePost from "../DeletePostModal/DeletePostModal";
 
-const ProfilePosts = ({ posts, updateNewPost }) => {
+const ProfilePosts = ({ posts, updateNewPost, user }) => {
   const API_URL = import.meta.env.VITE_API_URL;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState("");
   const openDeleteModal = () => setIsDeleteModalOpen(true);
   const closeDeleteModal = () => setIsDeleteModalOpen(false);
+  const currentUserId = localStorage.getItem("id");
 
   const handleDeleteClick = (postId) => {
     setSelectedPost(postId);
@@ -46,12 +47,16 @@ const ProfilePosts = ({ posts, updateNewPost }) => {
               alt={`Post ${item.id}`}
               className="w-full h-auto"
             />
-            <div
-              className="absolute top-2 right-2 flex items-center justify-center w-10 h-10 rounded-full border-2 border-white bg-red-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
-              onClick={() => handleDeleteClick(item.id)}
-            >
-              <AiOutlineDelete className="text-white w-6 h-6"></AiOutlineDelete>
-            </div>
+            {user.id === parseInt(currentUserId) ? (
+              <div
+                className="absolute top-2 right-2 flex items-center justify-center w-10 h-10 rounded-full border-2 border-white bg-red-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                onClick={() => handleDeleteClick(item.id)}
+              >
+                <AiOutlineDelete className="text-white w-6 h-6"></AiOutlineDelete>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         ))}
       </div>

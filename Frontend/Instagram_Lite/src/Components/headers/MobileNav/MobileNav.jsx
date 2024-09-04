@@ -29,7 +29,7 @@ const MobileNav = ({openModal}) => {
 
     {
       name: "Profile",
-      link: "/profile",
+      link: `/profile/${localStorage.getItem('username')}`,
       icons: (
         <img
           src="https://cdn-icons-png.flaticon.com/128/3135/3135715.png"
