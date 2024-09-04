@@ -76,7 +76,7 @@ const getProfileByUsername = async (req, res) => {
         username: user.username,
         fullname: user.fullname,
         followers: user.Followers,
-        following: user.Follwing
+        following: user.Following
       },
       posts: user.posts
     })
@@ -93,8 +93,6 @@ const getProfileByUsername = async (req, res) => {
 const followUser = async (req, res) => {
   const { followeeId } = req.params;
   const followerId = req.user.id
-
-  console.log(followeeId, followerId);
 
   try {
     const followee = await User.findByPk(followeeId);
@@ -141,7 +139,6 @@ const followUser = async (req, res) => {
 const unfollowUser = async (req, res) => {
   const { followeeId } = req.params;
   const followerId = req.user.id
-  console.log(followeeId, followerId);
   try {
     const follow = await Follow.findOne({
       where: { followeeId, followerId }
