@@ -1,4 +1,6 @@
-const { Post, User, Like, Comment, sequelize } = require('../models');
+const { Op } = require('sequelize');
+const { where } = require('sequelize');
+const { Post, User, Like, Comment, sequelize, Follow } = require('../models');
 const { body, validationResult } = require('express-validator');
 
 const validateCreatePost = [
@@ -34,23 +36,23 @@ const getAllPost = async (req, res) => {
         {
           model: Like,
           as: 'likes',
-          attributes: [],  
+          attributes: [],
         },
         {
           model: Comment,
           as: 'comments',
-          attributes: [],  
+          attributes: [],
         },
       ],
       attributes: {
         include: [
-          [sequelize.fn('COUNT', sequelize.col('likes.id')), 'likeCount'],  
-          [sequelize.fn('COUNT', sequelize.col('comments.id')), 'commentCount'],  
+          [sequelize.fn('COUNT', sequelize.col('likes.id')), 'likeCount'],
+          [sequelize.fn('COUNT', sequelize.col('comments.id')), 'commentCount'],
         ],
       },
       group: ['Post.id', 'postedBy.id'],
       order: [['createdAt', 'DESC']],
-      subQuery: false  
+      subQuery: false
     });
 
     const formattedPosts = posts.map((post) => ({
@@ -61,7 +63,7 @@ const getAllPost = async (req, res) => {
       postImg: post.image,
       likeCount: post.getDataValue('likeCount') || 0,
       commentCount: post.getDataValue('commentCount') || 0,
-      likedByUserIds: post.likes ? post.likes.map(like => like.userId) : [], 
+      likedByUserIds: post.likes ? post.likes.map(like => like.userId) : [],
       caption: post.caption
     }));
 
@@ -158,7 +160,7 @@ const addComment = async (req, res) => {
     res.status(201).json(commentWithUser);
   } catch (err) {
     console.error('Error while adding comment:', err);
-    res.status(500).json({  message: 'Internal Server Error', error: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 
@@ -184,31 +186,96 @@ const getComments = async (req, res) => {
 
 
 const deletePost = async (req, res) => {
-    try {
-      const { postId } = req.params;
-      const userId = req.user.id;
-  
-      const post = await Post.findByPk(postId);
-  
-      if (!post) {
-        return res.status(404).json({ message: 'Post not found' });
-      }
-  
-      if (post.userId !== userId) {
-        return res
-          .status(403)
-          .json({ message: 'You are not authorized to delete this post' });
-      }
-  
-      await Comment.destroy({ where: { postId } });
-      await Like.destroy({ where: { postId } });
-      await post.destroy();
-  
-      res.status(200).json({ message: 'Post deleted successfully' });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  };
+  try {
+    const { postId } = req.params;
+    const userId = req.user.id;
 
-module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost, addComment, getComments, deletePost };
+    const post = await Post.findByPk(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    if (post.userId !== userId) {
+      return res
+        .status(403)
+        .json({ message: 'You are not authorized to delete this post' });
+    }
+
+    await Comment.destroy({ where: { postId } });
+    await Like.destroy({ where: { postId } });
+    await post.destroy();
+
+    res.status(200).json({ message: 'Post deleted successfully' });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+const getFollowingPost = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const followingUsers = await Follow.findAll({
+      where: { followerId: userId },
+    });
+    const followingUserIds = followingUsers.map((follow) =>
+      follow.followeeId
+    );
+
+    if (followingUserIds.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    const posts = await Post.findAll({
+      where: {
+        userId: {
+          [Op.in]: followingUserIds,
+        },
+      },
+      include: [
+        {
+          model: User,
+          as: 'postedBy',
+          attributes: ['username'],
+        },
+        {
+          model: Like,
+          as: 'likes',
+          attributes: ['userId'],
+        },
+        {
+          model: Comment,
+          as: 'comments',
+          attributes: [],
+        },
+      ],
+      order: [['CreatedAt', 'DESC']],
+      attributes: {
+        include: [
+          [sequelize.fn('COUNT', sequelize.col('comments.id')), 'commentCount'],
+        ],
+      },
+      group: ['Post.id', 'postedBy.id'],
+    });
+    const formattedPosts = posts.map((post) => ({
+      id: post.id,
+      profileImg: 'https://cdn-icons-png.flaticon.com/128/3177/3177440.png',
+      username: post.postedBy.username,
+      time: post.createdAt,
+      postImg: post.image,
+      likeCount: post.likes.length,
+      commentCount: post.getDataValue('commentCount'),
+      likedByUserIds: post.likes.map((like) => like.userId),
+      caption: post.caption,
+    }));
+
+    res.status(200).json(formattedPosts);
+  } catch (err) {
+    console.error("Error fetching posts from following users:", err)
+    res.status(500).json({ message: "Internal server error" })
+  }
+};
+
+module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost, addComment, getComments, deletePost, getFollowingPost }  ;
