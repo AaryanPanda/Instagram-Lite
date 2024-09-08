@@ -1,5 +1,5 @@
-const { Op } = require('sequelize');
 const { where } = require('sequelize');
+const { Op } = require('sequelize');
 const { Post, User, Like, Comment, sequelize, Follow } = require('../models');
 const { body, validationResult } = require('express-validator');
 
@@ -216,66 +216,71 @@ const deletePost = async (req, res) => {
 
 const getFollowingPost = async (req, res) => {
   try {
+
     const userId = req.user.id;
     const followingUsers = await Follow.findAll({
       where: { followerId: userId },
-    });
-    const followingUserIds = followingUsers.map((follow) =>
-      follow.followeeId
-    );
-
-    if (followingUserIds.length === 0) {
-      return res.status(200).json([]);
     }
+    )
 
+    const followingUserIds = followingUsers.map((follow) => follow.followeeId);
+    if (followingUserIds.length === 0) {
+      return res.status(200).json([])
+    }
     const posts = await Post.findAll({
       where: {
         userId: {
-          [Op.in]: followingUserIds,
-        },
+          [Op.in]: followingUserIds
+        }
       },
       include: [
         {
           model: User,
-          as: 'postedBy',
-          attributes: ['username'],
+          as: "postedBy",
+          attributes: ['username']
         },
         {
           model: Like,
-          as: 'likes',
-          attributes: ['userId'],
+          as: "likes",
+          attributes: []
         },
         {
           model: Comment,
-          as: 'comments',
-          attributes: [],
-        },
+          as: "comments",
+          attributes: []
+        }
       ],
-      order: [['CreatedAt', 'DESC']],
+      order: [['createdAt', "DESC"]],
       attributes: {
         include: [
-          [sequelize.fn('COUNT', sequelize.col('comments.id')), 'commentCount'],
-        ],
+          [sequelize.fn("COUNT", sequelize.col("comments.id")), "commentCount"]
+        ]
       },
-      group: ['Post.id', 'postedBy.id'],
-    });
+      group: ["Post.id", "postedBy.id"]
+
+    })
+
+
     const formattedPosts = posts.map((post) => ({
       id: post.id,
-      profileImg: 'https://cdn-icons-png.flaticon.com/128/3177/3177440.png',
+      profileImg: "https://cdn-icons-png.flaticon.com/128/3177/3177440.png",
       username: post.postedBy.username,
       time: post.createdAt,
       postImg: post.image,
-      likeCount: post.likes.length,
-      commentCount: post.getDataValue('commentCount'),
-      likedByUserIds: post.likes.map((like) => like.userId),
-      caption: post.caption,
+      likeCount: post.getDataValue('likeCount') || 0,
+      commentCount: post.getDataValue("commentCount"),
+      likedByUserIds: post.likes ? post.likes.map(like => like.userId) : [],
+      caption: post.caption
+
     }));
 
-    res.status(200).json(formattedPosts);
+    res.status(200).json(formattedPosts)
+
   } catch (err) {
     console.error("Error fetching posts from following users:", err)
     res.status(500).json({ message: "Internal server error" })
   }
-};
+}
 
-module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost, addComment, getComments, deletePost, getFollowingPost }  ;
+
+module.exports = { createPost, validateCreatePost, getAllPost, likePost, unlikePost, addComment, getComments, deletePost, getFollowingPost };

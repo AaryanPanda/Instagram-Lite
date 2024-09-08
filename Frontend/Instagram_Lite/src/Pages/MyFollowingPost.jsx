@@ -1,13 +1,16 @@
 import React from "react";
-import Feed from "../Components/Feed/Feed";
 import { useOutletContext } from "react-router-dom";
+import MyFollowingFeed from "../Components/Feed/MyFollowingFeed";
 
 export default function MyFollowingPost() {
   const { newPost, updateNewPost } = useOutletContext();
 
   return (
     <>
-      <Feed newPost={newPost} updateNewPost={updateNewPost}></Feed>
+      <MyFollowingFeed
+        newPost={newPost}
+        updateNewPost={updateNewPost}
+      ></MyFollowingFeed>
     </>
   );
 }

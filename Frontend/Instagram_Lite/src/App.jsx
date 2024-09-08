@@ -4,6 +4,7 @@ import SignIn from "./Pages/Signin";
 import Home from "./Pages/Home";
 import Profile from "./Pages/Profile";
 import AppLayout from "./Pages/AppLayout";
+import MyFollowingPost from "./Pages/MyFollowingPost";
 import { AuthProvider, useAuth } from "./Context/AuthContext";
 
 function RoutesComponent() {
@@ -20,6 +21,7 @@ function RoutesComponent() {
           >
             <Route path="/" element={<Home />} />
             <Route path="/profile/:username" element={<Profile />} />
+            <Route path="/following" element={<MyFollowingPost />} />
           </Route>
           <Route
             path="/signup"
