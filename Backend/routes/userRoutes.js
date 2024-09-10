@@ -23,4 +23,7 @@ router.delete(
     profileController.deleteProfilePhoto
 );
 
+router.post('/google', userController.userGoogleLogin);
+router.post('/complete-profile', userController.completeProfile);
+
 module.exports = router
