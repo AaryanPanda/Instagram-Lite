@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import GoogleLoginButton from "../Components/GoogleLogin/GoogleLoginButton";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -14,7 +15,7 @@ export default function SignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if(validatePassword()) {
+    if (validatePassword()) {
       signup();
     }
   };
@@ -25,7 +26,7 @@ export default function SignUp() {
       /^(?=.{4,})/;
     if (!passwordPattern.test(password)) {
       toast.error(
-        'Password must contain at least 8 characters, including at least 1 number and 1 includes both lower and uppercase letters and special characters for example #,?,!'
+        "Password must contain at least 8 characters, including at least 1 number and 1 includes both lower and uppercase letters and special characters for example #,?,!"
       );
       return false;
     }
@@ -50,11 +51,11 @@ export default function SignUp() {
       const data = await response.json();
       if (response.ok) {
         toast.success(data.message);
-        setFullName('');
-        setEmail('');
-        setUsername('');
-        setPassword('');
-        navigate('/signin')
+        setFullName("");
+        setEmail("");
+        setUsername("");
+        setPassword("");
+        navigate("/signin");
       } else {
         toast.error(data.error);
       }
@@ -67,16 +68,22 @@ export default function SignUp() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <ToastContainer />
-      <div className="w-full max-w-sm space-y-8">
-        <div className="bg-white p-10 rounded-lg shadow-lg">
-          <div className="flex justify-center mb-6">
-            <img src="https://kq-storage.s3.ap-south-1.amazonaws.com/logo.png" alt="Logo" className="h-14 w-auto" />
+      <div className="w-full max-w-sm space-y-6">
+        <div className="bg-white p-8 rounded-lg shadow-lg">
+          <div className="flex justify-center mb-8">
+            <img
+              src="https://kq-storage.s3.ap-south-1.amazonaws.com/logo.png"
+              alt="Logo"
+              className="h-14 w-auto"
+            />
           </div>
-          <p className="text-center text-gray-500 mb-4">Sign up to see photos and videos from your friends.</p>
+          <p className="text-center text-gray-500 mb-4">
+            Sign up to see photos and videos from your friends.
+          </p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
-              placeholder='Full Name'
+              placeholder="Full Name"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
@@ -84,7 +91,7 @@ export default function SignUp() {
             />
             <input
               type="email"
-              placeholder='Email'
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -92,7 +99,7 @@ export default function SignUp() {
             />
             <input
               type="text"
-              placeholder='Username'
+              placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -100,18 +107,25 @@ export default function SignUp() {
             />
             <input
               type="password"
-              placeholder='Password'
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <p className="text-xs text-gray-500 text-center mt-4">
-              By signing up, you agree to our <a href="/terms" className="text-blue-500 hover:underline">Terms</a> and{" "}
-              <a href="" className="text-blue-500 hover:underline">Privacy Policy</a>.
+              By signing up, you agree to our{" "}
+              <a href="/terms" className="text-blue-500 hover:underline">
+                Terms
+              </a>{" "}
+              and{" "}
+              <a href="" className="text-blue-500 hover:underline">
+                Privacy Policy
+              </a>
+              .
             </p>
             <button
-              type='submit'
+              type="submit"
               className="w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600 transition duration-200"
             >
               Sign Up
@@ -122,12 +136,17 @@ export default function SignUp() {
             <span className="px-2 text-gray-500">OR</span>
             <div className="flex-grow h-px bg-gray-300"></div>
           </div>
-          <button className="w-full bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition duration-200">
-            Continue With Google
-          </button>
+          <div className="flex justify-center">
+            <GoogleLoginButton> Continue With Google </GoogleLoginButton>
+          </div>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-lg text-center mt-4">
-          <p>Have an account? <Link to={`/signin`} className="text-blue-500 hover:underline">Sign In</Link></p>
+        <div className="bg-white p-4 rounded-lg shadow-lg text-center mt-1">
+          <p>
+            Have an account?{" "}
+            <Link to={`/signin`} className="text-blue-500 hover:underline">
+              Sign In
+            </Link>
+          </p>
         </div>
       </div>
     </div>
