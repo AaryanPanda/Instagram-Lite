@@ -4,12 +4,12 @@ const sequelize = require('../config/db');
 const User = sequelize.define('User', {
   username: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true,
   },
   fullname: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   email: {
     type: DataTypes.STRING,
@@ -24,6 +24,14 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: true
   }
+}, {
+  validate: {
+    eitherPasswordOrGoogleId() {
+      if (!this.password && !this.googleId) {
+        throw new Error('Either password or Google ID must be provided');
+      }
+    },
+  },
 });
 
 module.exports = User;

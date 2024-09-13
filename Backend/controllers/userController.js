@@ -66,4 +66,67 @@ const loginUser = async (req, res) => {
 };
 
 
-module.exports = {registerUser, loginUser}
+const userGoogleLogin = async (req, res) => {
+  const { email_verified, email, name, googleId, Photo } = req.body;
+  try {
+    if (!email_verified) {
+      return res.status(400).json({ message: 'Email not verfied' });
+    }
+
+    let user = await User.findOne({ where: { email } });
+
+    if (user) {
+      const token = jwt.sign(
+        { id: user.id, username: user.username },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+      return res.status(200).json({
+        id: user.id,
+        username: user.username,
+        token,
+        message: 'Login Successfully',
+      });
+    }
+
+    const newUser = await User.create({
+      fullName: name,
+      email,
+      googleId,
+      profilePhoto: Photo,
+    });
+
+    const token = jwt.sign({ id: newUser.id }, JWT_SECRET, { expiresIn: '7d' });
+
+    return res.status(200).json({
+      id: newUser.id,
+      username: newUser.username,
+      token,
+      message: 'New User, complete your profile',
+    });
+  } catch (err) {
+    res.stattus(500).json({ err: err.message });
+  }
+};
+
+
+const completeProfile = async (req, res) => {
+  const { userId, username } = req.body;
+  try {
+    let userExists = await User.findOne({ where: { username } });
+    if (userExists) {
+      return res.status(400).json({ error: 'Username already taken' });
+    }
+
+    let user = await User.findByPk(userId);
+    user.username = username;
+    await user.save();
+
+    return res.status(200).json({ message: 'Profile completed successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+module.exports = {registerUser, loginUser, userGoogleLogin, completeProfile}
