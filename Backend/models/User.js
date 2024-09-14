@@ -18,11 +18,17 @@ const User = sequelize.define('User', {
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   profilePhoto: {
     type: DataTypes.STRING,
     allowNull: true
+  },
+  googleId:{
+      type:DataTypes.STRING,
+      allowNull: true ,
+      unique:true
+
   }
 }, {
   validate: {

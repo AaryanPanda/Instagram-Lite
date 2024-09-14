@@ -6,6 +6,8 @@ import Profile from "./Pages/Profile";
 import AppLayout from "./Pages/AppLayout";
 import MyFollowingPost from "./Pages/MyFollowingPost";
 import { AuthProvider, useAuth } from "./Context/AuthContext";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import CompleteProfile from "./Components/GoogleLogin/CompleteProfile";
 
 function RoutesComponent() {
   const { isAuthenticated } = useAuth();
@@ -31,6 +33,7 @@ function RoutesComponent() {
             path="/signin"
             element={isAuthenticated ? <Navigate to="/" /> : <SignIn />}
           />
+          <Route path="/complete-profile" element={<CompleteProfile />}/>
         </Routes>
       </div>
     </BrowserRouter>
@@ -40,7 +43,9 @@ function RoutesComponent() {
 function App() {
   return (
     <AuthProvider>
-      <RoutesComponent></RoutesComponent>
+      <GoogleOAuthProvider clientId="98948634351-sh8gbm4690i0kps63rb2iov5duvt5pjm.apps.googleusercontent.com">
+        <RoutesComponent></RoutesComponent>
+      </GoogleOAuthProvider>
     </AuthProvider>
   );
 }

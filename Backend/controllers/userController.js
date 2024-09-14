@@ -88,9 +88,9 @@ const userGoogleLogin = async (req, res) => {
         message: 'Login Successfully',
       });
     }
-
+  
     const newUser = await User.create({
-      fullName: name,
+      fullname: name,
       email,
       googleId,
       profilePhoto: Photo,
@@ -105,7 +105,8 @@ const userGoogleLogin = async (req, res) => {
       message: 'New User, complete your profile',
     });
   } catch (err) {
-    res.stattus(500).json({ err: err.message });
+    res.status(500).json({ err: err.message });
+    console.error(err);
   }
 };
 
