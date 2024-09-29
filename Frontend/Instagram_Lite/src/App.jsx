@@ -10,7 +10,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import CompleteProfile from "./Components/GoogleLogin/CompleteProfile";
 
 function RoutesComponent() {
-  const { isAuthenticated } = useAuth();
+  const {isAuthenticated  } = useAuth();
   return (
     <BrowserRouter>
       <div className="App">

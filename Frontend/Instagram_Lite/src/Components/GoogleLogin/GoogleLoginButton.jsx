@@ -2,10 +2,12 @@ import React from "react";
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../Context/AuthContext";
 
 const GoogleLoginButton = () => {
     const API_URL = import.meta.env.VITE_API_URL;
     const navigate = useNavigate()
+    const { login } = useAuth();
 
     const handleGoogleLogin = async (credentialResponse) => {
         try {
@@ -40,6 +42,7 @@ const GoogleLoginButton = () => {
             if (res.ok) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('id', data.id);
+                login(data);
                 if (data.message.includes("complete your profile")) {
                     navigate("/complete-profile")
                 } else {
