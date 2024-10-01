@@ -246,7 +246,7 @@ const searchUsers = async (req, res) => {
     const users = await User.findAll({
       where: {
         username: {
-          [Op.like]: `%{query}%`,
+          [Op.like]: `%${query}%`,
         }
       },
       attributes: ["id", "username", "fullname", "profilePhoto"]
