@@ -10,7 +10,7 @@ import {
 import PostDetailPage from "../PostDetailPage/PostDetailPage";
 import { Link } from "react-router-dom";
 
-const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost }) => {
+const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost, setFeeds }) => {
   const [newComment, setNewComment] = useState("");
   const timeAgo = formatDistanceToNow(new Date(feed.time), { addSuffix: true });
   const isLikedByCurrentUser = feed.likedByUserIds.includes(currentUserId);
@@ -30,7 +30,7 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost }) => {
     setIsPostDetailModal(true);
   };
 
-  //Add Comment Function
+  // Add Comment Function
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
 
@@ -53,9 +53,17 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost }) => {
 
       const data = await response.json();
       console.log(data);
-      updateNewPost();
-      updateCommentList();
+
+      // Optimistically update the comment count in the feed
+      setFeeds((prevFeeds) =>
+        prevFeeds.map((post) =>
+          post.id === feed.id ? { ...post, commentCount: post.commentCount + 1 } : post
+        )
+      );
+
       setNewComment("");
+      updateNewPost(); // Optional, can be used to refresh the post if needed
+      updateCommentList();
     } catch (err) {
       console.log(err);
     }
@@ -85,7 +93,7 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost }) => {
         </div>
       </div>
       {/* Post Image */}
-      <div className="w-full max-h-[75vh] overflow-hidden rounder-lg mb-3">
+      <div className="w-full max-h-[75vh] overflow-hidden rounded-lg mb-3">
         <img
           src={feed.postImg}
           alt={feed.caption}
@@ -144,7 +152,7 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost }) => {
       </div>
 
       {/* Add Comment  */}
-      <div className="w-full flex iteme-center justify-between border-b border-gray-300 pt-2">
+      <div className="w-full flex items-center justify-between border-b border-gray-300 pt-2">
         <input
           type="text"
           value={newComment}
@@ -177,4 +185,5 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost }) => {
     </div>
   );
 };
+
 export default FeedCard;
