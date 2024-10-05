@@ -10,7 +10,7 @@ const getProfile = async (req, res) => {
       })
     }
 
-    const { id, fullname, username } = req.user
+    const { id, fullname, username, profilePhoto } = req.user
 
     const posts = await Post.findAll({
       where: { userId: id },
@@ -19,7 +19,7 @@ const getProfile = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      user: { id, username, fullname },
+      user: { id, username, fullname, profilePhoto },
       posts
     })
 
@@ -75,6 +75,7 @@ const getProfileByUsername = async (req, res) => {
         id: user.id,
         username: user.username,
         fullname: user.fullname,
+        profilePhoto: user.profilePhoto,
         followers: user.Followers,
         following: user.Following
       },
@@ -186,6 +187,7 @@ const updateProfilePhoto = async (req, res) => {
         .json({ success: false, message: 'User not found' });
     }
     user.profilePhoto = profilePhoto;
+    console.log(user.profilePhoto);
     await user.save();
 
     res.status(200).json({

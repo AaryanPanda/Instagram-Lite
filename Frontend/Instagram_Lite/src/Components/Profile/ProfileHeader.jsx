@@ -1,14 +1,17 @@
 import React, { useState } from "react";
-import ClipLoader from 'react-spinners/ClipLoader';
+import ClipLoader from "react-spinners/ClipLoader";
 import { supabase } from "../../Services/SupabaseClient.jsx";
 
-const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
+const ProfileHeader = ({ username, postCount, user: initialUser, updateNewPost }) => {
   const API_URL = import.meta.env.VITE_API_URL;
   const currentUserId = parseInt(localStorage.getItem("id"));
+  const [user, setUser] = useState(initialUser); 
   const [isFollowing, setIsFollowing] = useState(
     user.followers.some((follower) => follower.id === currentUserId)
   );
   const [showProfilePicModal, setShowProfilePicModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const openProfilePicModal = () => {
     if (user.id === currentUserId) {
       setShowProfilePicModal(true);
@@ -17,7 +20,6 @@ const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
   const closeProfilePicModal = () => {
     setShowProfilePicModal(false);
   };
-  const [loading, setLoading] = useState(false);
 
   //Handle Follow and Unfollow Functions
   const handleUnFollow = async () => {
@@ -77,7 +79,9 @@ const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
         .upload(fileName, image);
       console.log("Uploaded data : ", data);
 
-      const urlInfo = supabase.storage.from("Post_Images").getPublicUrl(data.path);
+      const urlInfo = supabase.storage
+        .from("Post_Images")
+        .getPublicUrl(data.path);
 
       uploadProfilePhotoInDatabase(urlInfo.data.publicUrl);
 
@@ -105,6 +109,9 @@ const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
       }
       const data = await response.json();
       console.log(data);
+
+      // Update user state with new profile photo
+      setUser((prevUser) => ({ ...prevUser, profilePhoto: photoUrl }));
     } catch (error) {
       console.error(error);
     } finally {
@@ -128,6 +135,9 @@ const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
       }
       const data = await response.json();
       console.log(data);
+
+      // Remove the profile photo in the state (set to null or an empty string)
+      setUser((prevUser) => ({ ...prevUser, profilePhoto: null }));
     } catch (error) {
       console.error(error);
     } finally {
@@ -140,9 +150,9 @@ const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
     <div className="flex items-center p-4">
       <img
         onClick={openProfilePicModal}
-        src="https://via.placeholder.com/150"
-        alt=""
-        className="w-24 h-24 rounded-full"
+        src={user.profilePhoto ? user.profilePhoto : "https://via.placeholder.com/150"}
+        alt="Profile"
+        className="w-24 h-24 rounded-full border border-gray-300"
       />
       <div className="ml-6">
         <div className="text-2xl font-semibold">{username}</div>

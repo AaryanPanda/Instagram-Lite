@@ -46,69 +46,93 @@ const Feed = ({ newPost, updateNewPost }) => {
     fetchUserId();
   }, [newPost, page]);
 
-
-const likePost = async (id) => {
-  // Optimistically update the state
-  setFeeds((prevFeeds) =>
-    prevFeeds.map((feed) =>
-      feed.id === id ? { ...feed, likedByUserIds: [...feed.likedByUserIds, currentUserId], likeCount: feed.likeCount + 1 } : feed
-    )
-  );
-
-  try {
-    const response = await fetch(`${API_URL}/api/posts/like`, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-      body: JSON.stringify({ postId: id }),
-    });
-    const result = await response.json();
-    console.log(result);
-    updateNewPost(); // Optional, can be used to re-fetch data if needed
-  } catch (err) {
-    console.log(err);
-    // Rollback in case of error
+  const likePost = async (id) => {
     setFeeds((prevFeeds) =>
       prevFeeds.map((feed) =>
-        feed.id === id ? { ...feed, likedByUserIds: feed.likedByUserIds.filter(uid => uid !== currentUserId), likeCount: feed.likeCount - 1 } : feed
+        feed.id === id
+          ? {
+              ...feed,
+              likedByUserIds: [...feed.likedByUserIds, currentUserId],
+              likeCount: feed.likeCount + 1,
+            }
+          : feed
       )
     );
-  }
-};
 
-const unlikePost = async (id) => {
-  // Optimistically update the state
-  setFeeds((prevFeeds) =>
-    prevFeeds.map((feed) =>
-      feed.id === id ? { ...feed, likedByUserIds: feed.likedByUserIds.filter(uid => uid !== currentUserId), likeCount: feed.likeCount - 1 } : feed
-    )
-  );
+    try {
+      const response = await fetch(`${API_URL}/api/posts/like`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ postId: id }),
+      });
+      const result = await response.json();
+      console.log(result);
+      updateNewPost();
+    } catch (err) {
+      console.log(err);
+      // Rollback in case of error
+      setFeeds((prevFeeds) =>
+        prevFeeds.map((feed) =>
+          feed.id === id
+            ? {
+                ...feed,
+                likedByUserIds: feed.likedByUserIds.filter(
+                  (uid) => uid !== currentUserId
+                ),
+                likeCount: feed.likeCount - 1,
+              }
+            : feed
+        )
+      );
+    }
+  };
 
-  try {
-    const response = await fetch(`${API_URL}/api/posts/unlike`, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-      body: JSON.stringify({ postId: id }),
-    });
-    const result = await response.json();
-    console.log(result);
-    updateNewPost();
-  } catch (err) {
-    console.log(err);
-    // Rollback in case of error
+  const unlikePost = async (id) => {
     setFeeds((prevFeeds) =>
       prevFeeds.map((feed) =>
-        feed.id === id ? { ...feed, likedByUserIds: [...feed.likedByUserIds, currentUserId], likeCount: feed.likeCount + 1 } : feed
+        feed.id === id
+          ? {
+              ...feed,
+              likedByUserIds: feed.likedByUserIds.filter(
+                (uid) => uid !== currentUserId
+              ),
+              likeCount: feed.likeCount - 1,
+            }
+          : feed
       )
     );
-  }
-};
 
+    try {
+      const response = await fetch(`${API_URL}/api/posts/unlike`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ postId: id }),
+      });
+      const result = await response.json();
+      console.log(result);
+      updateNewPost();
+    } catch (err) {
+      console.log(err);
+      // Rollback in case of error
+      setFeeds((prevFeeds) =>
+        prevFeeds.map((feed) =>
+          feed.id === id
+            ? {
+                ...feed,
+                likedByUserIds: [...feed.likedByUserIds, currentUserId],
+                likeCount: feed.likeCount + 1,
+              }
+            : feed
+        )
+      );
+    }
+  };
 
   // Handle scrolling to load more posts
   const handleScroll = () => {
@@ -117,7 +141,6 @@ const unlikePost = async (id) => {
       document.documentElement.offsetHeight - 1
     ) {
       if (!isLoading) {
-        // Only fetch if not already loading
         setPage((prevPage) => prevPage + 1);
       }
     }
@@ -139,7 +162,7 @@ const unlikePost = async (id) => {
             {feeds &&
               feeds.map((feed) => (
                 <FeedCard
-                  key={feed.id} // Use post.id directly as the unique key
+                  key={feed.id}
                   updateNewPost={updateNewPost}
                   feed={feed}
                   onLike={likePost}

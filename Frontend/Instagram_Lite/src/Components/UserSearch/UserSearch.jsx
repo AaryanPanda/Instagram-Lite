@@ -58,7 +58,7 @@ export default function UserSearch() {
             results.map((user) => (
               <Link to={`/profile/${user.username}`}>
                 <div className="flex items-center px-4 py-3 cursor-pointer hover:bg-gray-300">
-                  <img src="https://via.placeholder.com/50" alt="" className="w-10 h-10 rounded-full" />
+                  <img src={user.profilePhoto ? user.profilePhoto : "https://via.placeholder.com/150"} alt="" className="w-10 h-10 rounded-full" />
                   <div className="ml-4"> 
                     <p className="font-semibold">{user.username}</p>
                     <p className="text-sm text-gray-500">{user.fullname}</p>
