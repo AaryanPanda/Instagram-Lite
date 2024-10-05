@@ -26,55 +26,71 @@ const createPost = async (req, res) => {
 
 const getAllPost = async (req, res) => {
   try {
+
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const offset = (page - 1) * limit
+    const totalPostsCount = await Post.count()
+    
     const posts = await Post.findAll({
       include: [
         {
           model: User,
           as: 'postedBy',
-          attributes: ['username'],
+          attributes: ['id', 'username'],
         },
         {
           model: Like,
           as: 'likes',
-          attributes: [],
+          attributes: ['userId'],
         },
         {
           model: Comment,
           as: 'comments',
-          attributes: [],
+          attributes: []
         },
       ],
       attributes: {
         include: [
-          [sequelize.fn('COUNT', sequelize.col('likes.id')), 'likeCount'],
-          [sequelize.fn('COUNT', sequelize.col('comments.id')), 'commentCount'],
+          [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('likes.id'))), 'likeCount'], // Count distinct likes
+          [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('comments.id'))), 'commentCount'], // Count distinct comments
         ],
       },
-      group: ['Post.id', 'postedBy.id'],
+      group: [
+        'Post.id',
+        'postedBy.id',
+        'postedBy.username',
+        'likes.id',
+      ],
       order: [['createdAt', 'DESC']],
+      limit: limit,
+      offset: offset,
       subQuery: false
     });
 
+    // Process and format the posts
     const formattedPosts = posts.map((post) => ({
       id: post.id,
       profileImg: "https://cdn-icons-png.flaticon.com/128/3177/3177440.png",
       username: post.postedBy.username,
       time: post.createdAt,
       postImg: post.image,
-      likeCount: post.getDataValue('likeCount') || 0,
-      commentCount: post.getDataValue('commentCount') || 0,
+      likeCount: parseInt(post.getDataValue('likeCount')) || 0,
+      commentCount: parseInt(post.getDataValue('commentCount')) || 0,
       likedByUserIds: post.likes ? post.likes.map(like => like.userId) : [],
-      caption: post.caption
+      caption: post.caption,
     }));
 
-    res.status(200).json(formattedPosts);
+    res.status(200).json({
+      posts: formattedPosts,
+      currentPage: page,
+      totalPosts: totalPostsCount
+    });
   } catch (error) {
     console.error('Error fetching posts: ' + error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
-
 
 const likePost = async (req, res) => {
   try {
