@@ -37,7 +37,7 @@ const getAllPost = async (req, res) => {
         {
           model: User,
           as: 'postedBy',
-          attributes: ['id', 'username'],
+          attributes: ['id', 'username', 'profilePhoto'],
         },
         {
           model: Like,
@@ -60,6 +60,7 @@ const getAllPost = async (req, res) => {
         'Post.id',
         'postedBy.id',
         'postedBy.username',
+        'postedBy.profilePhoto',
         'likes.id',
       ],
       order: [['createdAt', 'DESC']],
@@ -71,7 +72,7 @@ const getAllPost = async (req, res) => {
     // Process and format the posts
     const formattedPosts = posts.map((post) => ({
       id: post.id,
-      profileImg: "https://cdn-icons-png.flaticon.com/128/3177/3177440.png",
+      profileImg: post.postedBy.profilePhoto || "https://cdn-icons-png.flaticon.com/128/3177/3177440.png",
       username: post.postedBy.username,
       time: post.createdAt,
       postImg: post.image,
@@ -253,12 +254,12 @@ const getFollowingPost = async (req, res) => {
         {
           model: User,
           as: "postedBy",
-          attributes: ['username']
+          attributes: ['id', 'username', 'profilePhoto']
         },
         {
           model: Like,
           as: "likes",
-          attributes: []
+          attributes: ['userId']
         },
         {
           model: Comment,
@@ -269,22 +270,23 @@ const getFollowingPost = async (req, res) => {
       order: [['createdAt', "DESC"]],
       attributes: {
         include: [
-          [sequelize.fn("COUNT", sequelize.col("comments.id")), "commentCount"]
+          [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('likes.id'))), 'likeCount'], // Count distinct likes
+          [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('comments.id'))), 'commentCount'], // Count distinct comments
         ]
       },
-      group: ["Post.id", "postedBy.id"]
+      group: ["Post.id", "postedBy.id",'postedBy.username', 'postedBy.profilePhoto', 'likes.id']
 
     })
 
 
     const formattedPosts = posts.map((post) => ({
       id: post.id,
-      profileImg: "https://cdn-icons-png.flaticon.com/128/3177/3177440.png",
+      profileImg: post.postedBy.profilePhoto || "https://cdn-icons-png.flaticon.com/128/3177/3177440.png",
       username: post.postedBy.username,
       time: post.createdAt,
       postImg: post.image,
-      likeCount: post.getDataValue('likeCount') || 0,
-      commentCount: post.getDataValue("commentCount"),
+      likeCount: parseInt(post.getDataValue('likeCount')) || 0,
+      commentCount: parseInt(post.getDataValue('commentCount')) || 0,
       likedByUserIds: post.likes ? post.likes.map(like => like.userId) : [],
       caption: post.caption
 

@@ -1,25 +1,28 @@
 import React, { useState } from "react";
-import ClipLoader from 'react-spinners/ClipLoader';
+import ClipLoader from "react-spinners/ClipLoader";
 import { supabase } from "../../Services/SupabaseClient.jsx";
 
-const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
+const ProfileHeader = ({ username, postCount, user: initialUser, updateNewPost, profilePhoto, followers, following, user_id }) => {
   const API_URL = import.meta.env.VITE_API_URL;
   const currentUserId = parseInt(localStorage.getItem("id"));
+  const [user, setUser] = useState(initialUser); 
   const [isFollowing, setIsFollowing] = useState(
     user.followers.some((follower) => follower.id === currentUserId)
   );
   const [showProfilePicModal, setShowProfilePicModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const openProfilePicModal = () => {
-    if (user.id === currentUserId) {
+    if (user_id === currentUserId) {
       setShowProfilePicModal(true);
     }
   };
+
   const closeProfilePicModal = () => {
     setShowProfilePicModal(false);
   };
-  const [loading, setLoading] = useState(false);
 
-  //Handle Follow and Unfollow Functions
+  // Handle Follow and Unfollow Functions
   const handleUnFollow = async () => {
     try {
       const response = await fetch(`${API_URL}/api/users/unfollow/${user.id}`, {
@@ -66,7 +69,7 @@ const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
     }
   };
 
-  //Handle Update Profile Photo Functions
+  // Handle Update Profile Photo Functions
   const handleUploadPic = async (event) => {
     const image = event.target.files[0];
     if (image) {
@@ -77,12 +80,14 @@ const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
         .upload(fileName, image);
       console.log("Uploaded data : ", data);
 
-      const urlInfo = supabase.storage.from("Post_Images").getPublicUrl(data.path);
+      const urlInfo = supabase.storage
+        .from("Post_Images")
+        .getPublicUrl(data.path);
 
       uploadProfilePhotoInDatabase(urlInfo.data.publicUrl);
 
       console.log(
-        "File Link Retirieved Successfull : ",
+        "File Link Retrieved Successfully : ",
         urlInfo.data.publicUrl
       );
     }
@@ -105,6 +110,9 @@ const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
       }
       const data = await response.json();
       console.log(data);
+
+      // Update user state with new profile photo
+      setUser((prevUser) => ({ ...prevUser, profilePhoto: photoUrl }));
     } catch (error) {
       console.error(error);
     } finally {
@@ -128,6 +136,9 @@ const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
       }
       const data = await response.json();
       console.log(data);
+
+      // Remove the profile photo in the state (set to null or an empty string)
+      setUser((prevUser) => ({ ...prevUser, profilePhoto: null }));
     } catch (error) {
       console.error(error);
     } finally {
@@ -140,26 +151,23 @@ const ProfileHeader = ({ username, postCount, user, updateNewPost }) => {
     <div className="flex items-center p-4">
       <img
         onClick={openProfilePicModal}
-        src="https://via.placeholder.com/150"
-        alt=""
-        className="w-24 h-24 rounded-full"
+        src={profilePhoto ? profilePhoto : "https://via.placeholder.com/150"}
+        alt="Profile"
+        className="w-24 h-24 rounded-full border border-gray-300"
       />
       <div className="ml-6">
         <div className="text-2xl font-semibold">{username}</div>
         <div className="flex flex-wrap mt-2">
           <span className="mr-4">
-            {" "}
             <strong>{postCount}</strong> posts
           </span>
           <span className="mr-4">
-            {" "}
-            <strong>{user.followers.length}</strong> followers
+            <strong>{followers}</strong> followers
           </span>
           <span className="mr-4">
-            {" "}
-            <strong>{user.following.length}</strong> following
+            <strong>{following}</strong> following
           </span>
-          {user.id !== currentUserId && (
+          {user_id !== currentUserId && (
             <button
               className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
               onClick={isFollowing ? handleUnFollow : handleFollow}
