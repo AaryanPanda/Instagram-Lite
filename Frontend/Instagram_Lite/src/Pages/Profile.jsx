@@ -48,6 +48,10 @@ const Profile = () => {
             postCount={profileData.posts.length}
             updateNewPost={updateNewPost}
             user={profileData.user}
+            profilePhoto ={profileData.user.profilePhoto}
+            followers={profileData.user.followers.length}
+            following={profileData.user.following.length}
+            user_id={profileData.user.id}
           ></ProfileHeader>
           <ProfileBio fullname={profileData.user.fullname}></ProfileBio>
           <ProfilePosts

@@ -79,6 +79,7 @@ const MyFollowingFeed = ({ newPost, updateNewPost }) => {
                   key={feed.id}
                   updateNewPost={updateNewPost}
                   feed={feed}
+                  setFeeds={setFeeds}
                   onLike={likePost}
                   onUnlike={unlikePost}
                   currentUserId={currentUserId}

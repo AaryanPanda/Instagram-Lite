@@ -254,12 +254,12 @@ const getFollowingPost = async (req, res) => {
         {
           model: User,
           as: "postedBy",
-          attributes: ['username', 'profilePhoto']
+          attributes: ['id', 'username', 'profilePhoto']
         },
         {
           model: Like,
           as: "likes",
-          attributes: []
+          attributes: ['userId']
         },
         {
           model: Comment,
@@ -270,10 +270,11 @@ const getFollowingPost = async (req, res) => {
       order: [['createdAt', "DESC"]],
       attributes: {
         include: [
-          [sequelize.fn("COUNT", sequelize.col("comments.id")), "commentCount"]
+          [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('likes.id'))), 'likeCount'], // Count distinct likes
+          [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('comments.id'))), 'commentCount'], // Count distinct comments
         ]
       },
-      group: ["Post.id", "postedBy.id", 'postedBy.profilePhoto',]
+      group: ["Post.id", "postedBy.id",'postedBy.username', 'postedBy.profilePhoto', 'likes.id']
 
     })
 
@@ -284,8 +285,8 @@ const getFollowingPost = async (req, res) => {
       username: post.postedBy.username,
       time: post.createdAt,
       postImg: post.image,
-      likeCount: post.getDataValue('likeCount') || 0,
-      commentCount: post.getDataValue("commentCount"),
+      likeCount: parseInt(post.getDataValue('likeCount')) || 0,
+      commentCount: parseInt(post.getDataValue('commentCount')) || 0,
       likedByUserIds: post.likes ? post.likes.map(like => like.userId) : [],
       caption: post.caption
 

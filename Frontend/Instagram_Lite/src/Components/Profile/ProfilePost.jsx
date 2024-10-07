@@ -38,15 +38,15 @@ const ProfilePosts = ({ posts, updateNewPost, user }) => {
 
   return (
     <>
-      <div className="p-4 grid grid-cols-3 gap-2">
+      <div className="p-4 grid grid-cols-3 gap-4">
         {posts.map((item) => (
-          <div key={item.id} className="relative group">
+          <div key={item.id} className="relative group flex flex-col items-left justify-center">
             <img
               key={item.id}
               src={item.image}
               alt={`Post ${item.id}`}
-              className="w-full h-auto"
-            />
+              className="lg:w-60 lg:h-60 md:w-48 md:h-48 sm:w-40 sm:h-40 object-contain justify-center items-center"
+              />
             {user.id === parseInt(currentUserId) ? (
               <div
                 className="absolute top-2 right-2 flex items-center justify-center w-10 h-10 rounded-full border-2 border-white bg-red-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
