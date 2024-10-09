@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import {
   FaHome,
-  FaSearch,
-  FaUserFriends,
   FaUserPlus,
   FaPlusSquare,
   FaSignOutAlt
@@ -12,16 +10,6 @@ import {
 const LargeNav = ({ openLogoutModal, openModal }) => {
 
   const SidebarItems = [
-    {
-      name: "Search",
-      link: "/search",
-      icons: <FaSearch className="text-2xl" />,
-    },
-    {
-      name: "Followers",
-      link: "/followers",
-      icons: <FaUserFriends className="text-2xl" />,
-    },
     {
       name: "Following",
       link: "/following",

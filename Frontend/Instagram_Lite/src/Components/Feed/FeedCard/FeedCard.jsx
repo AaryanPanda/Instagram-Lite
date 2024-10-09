@@ -26,10 +26,6 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost, setFee
     setIsPostDetailModal(false);
   };
 
-  const handleOpenModal = () => {
-    setIsPostDetailModal(true);
-  };
-
   // Add Comment Function
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
