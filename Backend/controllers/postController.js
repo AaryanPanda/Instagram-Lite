@@ -1,6 +1,6 @@
 const { where } = require('sequelize');
 const { Op } = require('sequelize');
-const { Post, User, Like, Comment, sequelize, Follow } = require('../models');
+const { Post, User, Like, Comment, sequelize, Follow } = require('../models/index');
 const { body, validationResult } = require('express-validator');
 
 const validateCreatePost = [
