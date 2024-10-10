@@ -14,7 +14,6 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost, setFee
   const [newComment, setNewComment] = useState("");
   const timeAgo = formatDistanceToNow(new Date(feed.time), { addSuffix: true });
   const isLikedByCurrentUser = feed.likedByUserIds.includes(currentUserId);
-  const API_URL = import.meta.env.VITE_API_URL;
   const [isPostDetailModal, setIsPostDetailModal] = useState(false);
   const [updateNewComment, setUpdateNewComment] = useState(false);
 
@@ -26,16 +25,12 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost, setFee
     setIsPostDetailModal(false);
   };
 
-  const handleOpenModal = () => {
-    setIsPostDetailModal(true);
-  };
-
   // Add Comment Function
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
 
     try {
-      const response = await fetch(`${API_URL}/api/posts/addComments`, {
+      const response = await fetch(`/api/posts/addComments`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

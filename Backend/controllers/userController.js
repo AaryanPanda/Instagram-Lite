@@ -81,6 +81,15 @@ const userGoogleLogin = async (req, res) => {
         JWT_SECRET,
         { expiresIn: '7d' }
       );
+
+      if (!user.username) {
+        return res.status(200).json({
+          id: user.id,
+          token,
+          message: 'New User, complete your profile',
+        });
+      }
+      
       return res.status(200).json({
         id: user.id,
         username: user.username,
@@ -123,7 +132,9 @@ const completeProfile = async (req, res) => {
     user.username = username;
     await user.save();
 
-    return res.status(200).json({ message: 'Profile completed successfully' });
+    const token = jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: '7d' });
+
+    return res.status(200).json({ id: userId, token, username, message: 'Profile completed successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -6,7 +6,6 @@ import { useOutletContext, useParams } from "react-router-dom";
 
 const Profile = () => {
   const { username } = useParams();
-  const API_URL = import.meta.env.VITE_API_URL;
   const [profileData, setProfileData] = useState();
   const { newPost, updateNewPost } = useOutletContext();
 
@@ -14,7 +13,7 @@ const Profile = () => {
     const fetchProfileData = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/api/users/profile/${username}`,
+          `/api/users/profile/${username}`,
           {
             method: "GET",
             headers: {
