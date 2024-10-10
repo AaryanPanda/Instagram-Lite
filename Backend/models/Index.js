@@ -25,7 +25,7 @@ Comment.belongsTo(User, { foreignKey: "userId", as: "postedBy" });
 Post.hasMany(Comment, { foreignKey: "postId", as: "comments", onDelete: 'CASCADE' });
 Comment.belongsTo(Post, { foreignKey: "postId", as: "post", onDelete: 'CASCADE' });
 
-// Follow Association (User to User through Follow)
+// Follow Association 
 User.belongsToMany(User, { through: Follow, as: 'Followers', foreignKey: 'followeeId', onDelete: 'CASCADE' });
 User.belongsToMany(User, { through: Follow, as: 'Following', foreignKey: 'followerId', onDelete: 'CASCADE' });
 
