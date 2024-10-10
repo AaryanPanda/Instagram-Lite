@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function UserSearch() {
-  const API_URL = import.meta.env.VITE_API_URL;
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -18,7 +17,7 @@ export default function UserSearch() {
 
     try {
       const response = await fetch(
-        `${API_URL}/api/users/search?query=${searchTerm}`
+        `/api/users/search?query=${searchTerm}`
       );
       if (!response.ok) {
         throw new Error("Network Response is not Ok");

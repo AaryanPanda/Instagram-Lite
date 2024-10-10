@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
 
 const GoogleLoginButton = () => {
-    const API_URL = import.meta.env.VITE_API_URL;
     const navigate = useNavigate()
     const { login } = useAuth();
 
@@ -23,7 +22,7 @@ const GoogleLoginButton = () => {
                 Photo,
                 email_verified
             });
-            const res = await fetch(`${API_URL}/api/users/google`, {
+            const res = await fetch(`/api/users/google`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

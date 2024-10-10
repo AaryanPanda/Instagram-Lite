@@ -4,8 +4,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import GoogleLoginButton from "../Components/GoogleLogin/GoogleLoginButton";
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 export default function SignUp() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -35,7 +33,7 @@ export default function SignUp() {
 
   const signup = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/users/register`, {
+      const response = await fetch(`/api/users/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

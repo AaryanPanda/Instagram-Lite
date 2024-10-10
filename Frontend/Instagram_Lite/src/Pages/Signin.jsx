@@ -5,8 +5,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../Context/AuthContext";
 import GoogleLoginButton from "../Components/GoogleLogin/GoogleLoginButton";
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +19,7 @@ export default function SignIn() {
   const signin = async () => {
     console.log("Sign In function called");
     try {
-      const response = await fetch(`${API_URL}/api/users/login`, {
+      const response = await fetch(`/api/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

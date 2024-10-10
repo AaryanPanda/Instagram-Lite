@@ -3,7 +3,6 @@ import { AiOutlineDelete } from "react-icons/ai";
 import DeletePost from "../DeletePostModal/DeletePostModal";
 
 const ProfilePosts = ({ posts, updateNewPost, user }) => {
-  const API_URL = import.meta.env.VITE_API_URL;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState("");
   const openDeleteModal = () => setIsDeleteModalOpen(true);
@@ -18,7 +17,7 @@ const ProfilePosts = ({ posts, updateNewPost, user }) => {
   const deletePost = async () => {
     try {
       const response = await fetch(
-        `${API_URL}/api/posts/delete/${selectedPost}`,
+        `/api/posts/delete/${selectedPost}`,
         {
           method: "DELETE",
           headers: {
