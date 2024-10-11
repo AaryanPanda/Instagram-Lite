@@ -3,6 +3,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { supabase } from "../../Services/SupabaseClient.jsx";
 
 const ProfileHeader = ({ username, postCount, user: initialUser, updateNewPost, profilePhoto, followers, following, user_id }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const currentUserId = parseInt(localStorage.getItem("id"));
   const [user, setUser] = useState(initialUser); 
   const [isFollowing, setIsFollowing] = useState(
@@ -24,7 +25,7 @@ const ProfileHeader = ({ username, postCount, user: initialUser, updateNewPost, 
   // Handle Follow and Unfollow Functions
   const handleUnFollow = async () => {
     try {
-      const response = await fetch(`/api/users/unfollow/${user.id}`, {
+      const response = await fetch(`${API_URL}/api/users/unfollow/${user.id}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -47,7 +48,7 @@ const ProfileHeader = ({ username, postCount, user: initialUser, updateNewPost, 
 
   const handleFollow = async () => {
     try {
-      const response = await fetch(`/api/users/follow/${user.id}`, {
+      const response = await fetch(`${API_URL}/api/users/follow/${user.id}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -84,17 +85,16 @@ const ProfileHeader = ({ username, postCount, user: initialUser, updateNewPost, 
         .getPublicUrl(data.path);
 
       uploadProfilePhotoInDatabase(urlInfo.data.publicUrl);
-
       console.log(
         "File Link Retrieved Successfully : ",
         urlInfo.data.publicUrl
       );
     }
   };
-
+  
   const uploadProfilePhotoInDatabase = async (photoUrl) => {
     try {
-      const response = await fetch(`/api/users/profile/photo`, {
+      const response = await fetch(`${API_URL}/api/users/profile/photo`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -108,10 +108,8 @@ const ProfileHeader = ({ username, postCount, user: initialUser, updateNewPost, 
         throw new Error(response.statusText);
       }
       const data = await response.json();
-      console.log(data);
-
-      // Update user state with new profile photo
-      setUser((prevUser) => ({ ...prevUser, profilePhoto: photoUrl }));
+      console.log(data);      
+      window.location.reload();
     } catch (error) {
       console.error(error);
     } finally {
@@ -123,7 +121,7 @@ const ProfileHeader = ({ username, postCount, user: initialUser, updateNewPost, 
   const removeProfilePhotoInDatabase = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/users/profile/photo`, {
+      const response = await fetch(`${API_URL}/api/users/profile/photo`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -135,9 +133,7 @@ const ProfileHeader = ({ username, postCount, user: initialUser, updateNewPost, 
       }
       const data = await response.json();
       console.log(data);
-
-      // Remove the profile photo in the state (set to null or an empty string)
-      setUser((prevUser) => ({ ...prevUser, profilePhoto: null }));
+      window.location.reload();
     } catch (error) {
       console.error(error);
     } finally {

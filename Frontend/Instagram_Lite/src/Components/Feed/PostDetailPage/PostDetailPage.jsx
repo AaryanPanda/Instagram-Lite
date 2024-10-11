@@ -12,6 +12,7 @@ function PostDetailPage({
   setNewComment,
   updateNewComment,
 }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
@@ -19,7 +20,7 @@ function PostDetailPage({
       if (isPostDetailModal) {
         try {
           const response = await fetch(
-            `/api/posts/getComments/${feed.id}`
+            `${API_URL}/api/posts/getComments/${feed.id}`
           );
           if (!response.ok) {
             throw new Error(response.statusText);

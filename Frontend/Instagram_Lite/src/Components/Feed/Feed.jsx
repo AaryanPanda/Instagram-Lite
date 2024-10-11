@@ -3,6 +3,7 @@ import FeedCard from "./FeedCard/FeedCard.jsx";
 import UserSearch from "../UserSearch/UserSearch.jsx";
 
 const Feed = ({ newPost, updateNewPost }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [feeds, setFeeds] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [page, setPage] = useState(1);
@@ -13,7 +14,7 @@ const Feed = ({ newPost, updateNewPost }) => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `/api/posts/getAll?page=${page}&limit=3`
+          `${API_URL}/api/posts/getAll?page=${page}&limit=3`
         );
         if (!response.ok) {
           throw new Error("Network response is not OK");
@@ -59,7 +60,7 @@ const Feed = ({ newPost, updateNewPost }) => {
     );
 
     try {
-      const response = await fetch(`/api/posts/like`, {
+      const response = await fetch(`${API_URL}/api/posts/like`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -105,7 +106,7 @@ const Feed = ({ newPost, updateNewPost }) => {
     );
 
     try {
-      const response = await fetch(`/api/posts/unlike`, {
+      const response = await fetch(`${API_URL}/api/posts/unlike`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",

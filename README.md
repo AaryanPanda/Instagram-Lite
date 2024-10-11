@@ -46,22 +46,11 @@ This project was a learning experience focused on exploring new technologies in 
 
 ## Project Structure
 
-In this project, the frontend and backend are structured to run on the same port, and we serve the frontend from the backend itself. The `dist` folder, which contains the built frontend assets, is located inside the backend folder (inside the `client` folder).
-
-The frontend code is included in the repository for reference purposes only.
-
----
-
-## Running the Project Locally
-
-To run this project locally, please follow these steps:
-
-1. **Fork the Repository**: Start by forking the repository to your local device.
-2. **Navigate to the Backend Directory**: Open your terminal and navigate to the backend directory of the project.
-3. **Install Dependencies**: Run the following command to install the necessary dependencies:
-
-   ```bash
-   npm install
+- **Frontend (React & TailwindCSS)**: 
+  - Organized under the `frontend/` directory with components, services, and utilities separated for maintainability.
+  
+- **Backend (Node.js & Express)**:
+  - Managed under the `backend/` directory with separate folders for routes, controllers, and models for scalability.
 
 ---
   

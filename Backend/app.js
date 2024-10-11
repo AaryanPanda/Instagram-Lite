@@ -4,8 +4,6 @@ const sequelize = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const cors = require('cors');
-const path = require('path');
-
 
 const app = express();
 
@@ -15,14 +13,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
-
-// Serve static files from the 'dist' folder
-app.use(express.static(path.join(__dirname, './client/dist')));
-
-// Catch-all route to serve index.html for all other routes (React Router support)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, './client/dist', 'index.html'));
-});
 
 sequelize
   .sync()

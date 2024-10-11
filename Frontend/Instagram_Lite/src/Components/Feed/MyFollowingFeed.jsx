@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import FeedCard from "./FeedCard/FeedCard.jsx";
 
 const MyFollowingFeed = ({ newPost, updateNewPost }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [feeds, setFeeds] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
 
   useEffect(() => {
     const fetchFeeds = async () => {
       try {
-        const response = await fetch(`/api/posts/following-posts`, {
+        const response = await fetch(`${API_URL}/api/posts/following-posts`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -33,7 +34,7 @@ const MyFollowingFeed = ({ newPost, updateNewPost }) => {
 
   const likePost = async (id) => {
     try {
-      const response = await fetch(`/api/posts/like`, {
+      const response = await fetch(`${API_URL}/api/posts/like`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -51,7 +52,7 @@ const MyFollowingFeed = ({ newPost, updateNewPost }) => {
 
   const unlikePost = async (id) => {
     try {
-      const response = await fetch(`/api/posts/unlike`, {
+      const response = await fetch(`${API_URL}/api/posts/unlike`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
