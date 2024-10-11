@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
 
 export default function CompleteProfile() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const { login } = useAuth();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`/api/users/complete-profile`, {
+      const res = await fetch(`${API_URL}/api/users/complete-profile`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -5,6 +5,7 @@ import { supabase } from "../../Services/SupabaseClient.jsx";
 Modal.setAppElement(document.getElementById("root"));
 
 const CreatePost = ({ closeModal, updateNewPost }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [selectedImage, setSelectedImage] = useState(null);
   const [caption, setCaption] = useState("");
   const [hashtag, setHashtag] = useState("");
@@ -18,7 +19,7 @@ const CreatePost = ({ closeModal, updateNewPost }) => {
   const handleShare = async () => {
     if (selectedImage && caption && hashtag) {
       try {
-        const response = await fetch(`/api/posts/create`, {
+        const response = await fetch(`${API_URL}/api/posts/create`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -37,6 +38,7 @@ const CreatePost = ({ closeModal, updateNewPost }) => {
 
         await response.json();
         updateNewPost()
+        window.location.reload();
         closeModal();
       } catch (error) {
         console.error(error);

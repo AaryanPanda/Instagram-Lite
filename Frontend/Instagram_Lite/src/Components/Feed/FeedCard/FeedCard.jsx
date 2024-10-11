@@ -11,6 +11,7 @@ import PostDetailPage from "../PostDetailPage/PostDetailPage";
 import { Link } from "react-router-dom";
 
 const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost, setFeeds }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [newComment, setNewComment] = useState("");
   const timeAgo = formatDistanceToNow(new Date(feed.time), { addSuffix: true });
   const isLikedByCurrentUser = feed.likedByUserIds.includes(currentUserId);
@@ -30,7 +31,7 @@ const FeedCard = ({ feed, onLike, onUnlike, currentUserId, updateNewPost, setFee
     if (!newComment.trim()) return;
 
     try {
-      const response = await fetch(`/api/posts/addComments`, {
+      const response = await fetch(`${API_URL}/api/posts/addComments`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
