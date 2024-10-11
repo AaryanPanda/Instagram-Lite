@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import LargeNav from "../Components/Headers/DesktopNav/DesktopNav";
-import MobileNav from "../Components/Headers/MobileNav/MobileNav";
-import TopNav from "../Components/Headers/TopNav/TopNav";
+import LargeNav from "../Components/headers/DesktopNav/DesktopNav";
+import MobileNav from "../Components/headers/MobileNav/MobileNav";
+import TopNav from "../Components/headers/TopNav/TopNav";
 import { Outlet } from "react-router-dom";
 import Logout from "../Components/Logout/Logout";
 import { useAuth } from "../Context/AuthContext";
