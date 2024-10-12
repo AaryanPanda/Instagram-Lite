@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../Context/AuthContext";
 import GoogleLoginButton from "../Components/GoogleLogin/GoogleLoginButton";
+import ClipLoader from "react-spinners/ClipLoader"; 
 
 export default function SignIn() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -11,6 +12,7 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [loading, setLoading] = useState(false); 
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -18,6 +20,7 @@ export default function SignIn() {
   };
 
   const signin = async () => {
+    setLoading(true);
     console.log("Sign In function called");
     try {
       const response = await fetch(`${API_URL}/api/users/login`, {
@@ -47,6 +50,8 @@ export default function SignIn() {
       }
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      setLoading(false); 
     }
   };
 
@@ -65,35 +70,48 @@ export default function SignIn() {
           <p className="text-center text-gray-500 mb-4">
             Log in to see photos and videos from your friends.
           </p>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600 transition duration-200"
-            >
-              Sign In
-            </button>
-          </form>
+
+          {/* Show the spinner when loading */}
+          {loading ? (
+            <div className="flex justify-center my-4">
+              <ClipLoader color={"#3B82F6"} loading={loading} size={50} />
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={loading} 
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={loading} 
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="submit"
+                disabled={loading} 
+                className="w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600 transition duration-200"
+              >
+                Sign In
+              </button>
+            </form>
+          )}
+
           <div className="flex items-center my-4">
             <div className="flex-grow h-px bg-gray-300"></div>
             <span className="px-2 text-gray-500">OR</span>
             <div className="flex-grow h-px bg-gray-300"></div>
           </div>
+
           <div className="flex justify-center">
             <GoogleLoginButton>Continue With Google</GoogleLoginButton>
           </div>

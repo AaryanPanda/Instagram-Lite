@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import GoogleLoginButton from "../Components/GoogleLogin/GoogleLoginButton";
+import { ClipLoader } from "react-spinners"; 
 
 export default function SignUp() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -10,6 +11,7 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
@@ -33,6 +35,7 @@ export default function SignUp() {
   };
 
   const signup = async () => {
+    setLoading(true); 
     try {
       const response = await fetch(`${API_URL}/api/users/register`, {
         method: "POST",
@@ -61,6 +64,8 @@ export default function SignUp() {
     } catch (err) {
       console.log(err);
       toast.error("An error occurred");
+    } finally {
+      setLoading(false); 
     }
   };
 
@@ -126,8 +131,13 @@ export default function SignUp() {
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600 transition duration-200"
+              disabled={loading} 
             >
-              Sign Up
+              {loading ? (
+                <ClipLoader color="#ffffff" size={20} /> 
+              ) : (
+                "Sign Up"
+              )}
             </button>
           </form>
           <div className="flex items-center my-4">
