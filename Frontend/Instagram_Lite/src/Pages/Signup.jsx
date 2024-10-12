@@ -84,62 +84,65 @@ export default function SignUp() {
           <p className="text-center text-gray-500 mb-4">
             Sign up to see photos and videos from your friends.
           </p>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Full Name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <p className="text-xs text-gray-500 text-center mt-4">
-              By signing up, you agree to our{" "}
-              <a href="/terms" className="text-blue-500 hover:underline">
-                Terms
-              </a>{" "}
-              and{" "}
-              <a href="" className="text-blue-500 hover:underline">
-                Privacy Policy
-              </a>
-              .
-            </p>
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600 transition duration-200"
-              disabled={loading} 
-            >
-              {loading ? (
-                <ClipLoader color="#ffffff" size={20} /> 
-              ) : (
-                "Sign Up"
-              )}
-            </button>
-          </form>
+          {/* Render the spinner conditionally above the form */}
+          {loading ? (
+            <div className="flex justify-center my-4">
+              <ClipLoader color={"#3B82F6"} loading={loading} size={50} />
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="text-xs text-gray-500 text-center mt-4">
+                By signing up, you agree to our{" "}
+                <a href="/terms" className="text-blue-500 hover:underline">
+                  Terms
+                </a>{" "}
+                and{" "}
+                <a href="" className="text-blue-500 hover:underline">
+                  Privacy Policy
+                </a>
+                .
+              </p>
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600 transition duration-200"
+                disabled={loading}
+              >
+                Sign Up
+              </button>
+            </form>
+          )}
           <div className="flex items-center my-4">
             <div className="flex-grow h-px bg-gray-300"></div>
             <span className="px-2 text-gray-500">OR</span>
