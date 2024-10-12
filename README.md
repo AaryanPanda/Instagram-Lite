@@ -53,6 +53,12 @@ This project was a learning experience focused on exploring new technologies in 
   - Managed under the `backend/` directory with separate folders for routes, controllers, and models for scalability.
 
 ---
+
+## Live Demo
+
+Visit the live project here: **[Instagram Lite Live](https://insta5lite.netlify.app)**
+
+---
   
 ## Acknowledgments
 
